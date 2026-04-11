@@ -61,16 +61,20 @@ class AIBanana {
         return ["en-US,en;q=0.9", "id-ID,id;q=0.9"][Math.floor(Math.random() * 2)];
     }
 
-    async generate(prompt: string) {
+    // 🔥 FIX: support imageUrl
+    async generate(prompt: string, imageUrl?: string) {
         const token = await this.solver.solve(this.baseURL, this.siteKey);
 
         const vp = this.viewport();
         const chromeVer = Math.floor(Math.random() * 30) + 110;
 
+        const mode = imageUrl ? "image-to-image" : "text-to-image";
+
         const res = await axios.post(`${this.baseURL}/api/image-generation`, {
             prompt,
             model: "nano-banana-2",
-            mode: "text-to-image",
+            mode,
+            image: imageUrl || undefined,
             numImages: 1,
             aspectRatio: "1:1",
             clientFingerprint: this.fingerprint(),
@@ -96,10 +100,10 @@ class AIBanana {
     }
 }
 
-// ✅ EXPORT HANDLER (WAJIB buat autoload lo)
+// ✅ HANDLER
 export default async function handler(req: Request, res: Response) {
     try {
-        const { prompt } = req.query;
+        const { prompt, imageUrl } = req.query;
 
         if (!prompt) {
             return res.json({
@@ -109,10 +113,14 @@ export default async function handler(req: Request, res: Response) {
         }
 
         const banana = new AIBanana();
-        const result = await banana.generate(prompt as string);
+        const result = await banana.generate(
+            prompt as string,
+            imageUrl as string | undefined
+        );
 
         res.json({
             status: true,
+            mode: imageUrl ? "img2img" : "text2img",
             result
         });
 
