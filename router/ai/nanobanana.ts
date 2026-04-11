@@ -61,13 +61,13 @@ class AIBanana {
         return ["en-US,en;q=0.9", "id-ID,id;q=0.9"][Math.floor(Math.random() * 2)];
     }
 
-    async generate(prompt: string, imageUrl?: string) {
+    async generate(prompt: string, image?: string) {
         const token = await this.solver.solve(this.baseURL, this.siteKey);
 
         const vp = this.viewport();
         const chromeVer = Math.floor(Math.random() * 30) + 110;
 
-        const mode = imageUrl ? "image-to-image" : "text-to-image";
+        const mode = image ? "image-to-image" : "text-to-image";
 
         const payload: any = {
             prompt,
@@ -78,7 +78,7 @@ class AIBanana {
             deviceId: this.deviceId()
         };
 
-        if (imageUrl) payload.image = imageUrl;
+        if (image) payload.image = image;
 
         const res = await axios.post(`${this.baseURL}/api/image-generation`, payload, {
             headers: {
@@ -100,10 +100,12 @@ class AIBanana {
     }
 }
 
-// 🔥 EXPORT (WAJIB buat autoload lo)
+// 🔥 HANDLER
 export default async function handler(req: Request, res: Response) {
     try {
-        const { prompt, imageUrl } = req.query;
+        // 🔥 FLEXIBLE PARAM (INI KUNCI FIX LO)
+        const prompt = req.query.prompt as string;
+        const image = (req.query.image || req.query.imageUrl) as string;
 
         if (!prompt) {
             return res.json({
@@ -113,14 +115,11 @@ export default async function handler(req: Request, res: Response) {
         }
 
         const banana = new AIBanana();
-        const result = await banana.generate(
-            prompt as string,
-            imageUrl as string | undefined
-        );
+        const result = await banana.generate(prompt, image);
 
         res.json({
             status: true,
-            mode: imageUrl ? "img2img" : "text2img",
+            mode: image ? "img2img" : "text2img",
             result
         });
 
