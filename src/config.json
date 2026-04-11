@@ -1720,7 +1720,26 @@
         "required": true
            }
         ]
-      }
+      },
+      {
+  "name": "Nano Banana AI",
+  "endpoint": "/api/ai/nanobanana",
+  "filename": "nanobanana",
+  "method": "GET",
+  "description": "Generate / edit image menggunakan Nano Banana AI",
+  "params": [
+    {
+      "name": "prompt",
+      "required": true,
+      "description": "Prompt untuk generate/edit image"
+    },
+    {
+      "name": "imageUrl",
+      "required": false,
+      "description": "URL gambar untuk mode edit"
+    }
+  ]
+}
     ],
     "Downloader": [
     {
