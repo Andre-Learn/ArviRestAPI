@@ -1,140 +1,125 @@
-import fs from "fs"
-import { tmpdir } from "os"
-import { join, basename, extname } from "path"
-import axios from "axios"
-import FormData from "form-data"
-import { Request, Response } from "express"
+import axios from "axios";
+import crypto from "crypto";
+import { Request, Response } from "express";
 
-function genserial() {
-  let s = ""
-  for (let i = 0; i < 32; i++) s += Math.floor(Math.random() * 16).toString(16)
-  return s
-}
+class TurnstileSolver {
+    solverURL = "https://cf-solver-renofc.my.id/api/solvebeta";
 
-async function upload(filename: string) {
-  const form = new FormData()
-  form.append("file_name", filename)
+    async solve(url: string, siteKey: string, mode = "turnstile-min") {
+        const res = await axios.post(this.solverURL, {
+            url,
+            siteKey,
+            mode
+        }, {
+            headers: { "Content-Type": "application/json" }
+        });
 
-  const res = await axios.post(
-    "https://api.imgupscaler.ai/api/common/upload/upload-image",
-    form,
-    {
-      headers: {
-        ...form.getHeaders(),
-        origin: "https://imgupscaler.ai",
-        referer: "https://imgupscaler.ai/",
-      },
+        return res.data.token.result.token;
     }
-  )
-
-  return res.data.result
 }
 
-async function uploadtoOSS(putUrl: string, filePath: string) {
-  const file = fs.readFileSync(filePath)
-  const type = extname(filePath) === ".png" ? "image/png" : "image/jpeg"
+class AIBanana {
+    baseURL = "https://aibanana.net";
+    siteKey = "0x4AAAAAAB2-fh9F_EBQqG2_";
+    solver = new TurnstileSolver();
 
-  const res = await axios.put(putUrl, file, {
-    headers: {
-      "Content-Type": type,
-      "Content-Length": file.length,
-    },
-    maxBodyLength: Infinity,
-  })
-
-  return res.status === 200
-}
-
-async function createJob(imageUrl: string, prompt: string) {
-  const form = new FormData()
-  form.append("model_name", "magiceraser_v4")
-  form.append("original_image_url", imageUrl)
-  form.append("prompt", prompt)
-  form.append("ratio", "match_input_image")
-  form.append("output_format", "jpg")
-
-  const res = await axios.post(
-    "https://api.magiceraser.org/api/magiceraser/v2/image-editor/create-job",
-    form,
-    {
-      headers: {
-        ...form.getHeaders(),
-        "product-code": "magiceraser",
-        "product-serial": genserial(),
-        origin: "https://imgupscaler.ai",
-        referer: "https://imgupscaler.ai/",
-      },
-    }
-  )
-
-  return res.data.result.job_id
-}
-
-async function cekjob(jobId: string) {
-  const res = await axios.get(
-    `https://api.magiceraser.org/api/magiceraser/v1/ai-remove/get-job/${jobId}`,
-    {
-      headers: {
-        origin: "https://imgupscaler.ai",
-        referer: "https://imgupscaler.ai/",
-      },
-    }
-  )
-
-  return res.data
-}
-
-async function magicEraser(imagePath: string, prompt: string) {
-  const filename = basename(imagePath)
-  const up = await upload(filename)
-
-  await uploadtoOSS(up.url, imagePath)
-
-  const cdn = "https://cdn.imgupscaler.ai/" + up.object_name
-  const jobId = await createJob(cdn, prompt)
-
-  let result: any
-  do {
-    await new Promise((r) => setTimeout(r, 3000))
-    result = await cekjob(jobId)
-  } while (result.code === 300006)
-
-  return result.result.output_url[0]
-}
-
-export default async function nanoBananaHandler(req: Request, res: Response) {
-  try {
-    const { imageUrl, prompt } = req.query as { imageUrl: string; prompt: string }
-
-    if (!imageUrl || !prompt) {
-      return res.status(400).json({
-        status: false,
-        message: "imageUrl dan prompt wajib diisi"
-      })
+    fingerprint() {
+        return crypto.createHash("sha256")
+            .update(crypto.randomBytes(32))
+            .digest("hex");
     }
 
-    const imgRes = await axios.get(imageUrl, { responseType: "arraybuffer" })
-    const tmpInput = join(tmpdir(), `nano-${Date.now()}.jpg`)
-    fs.writeFileSync(tmpInput, Buffer.from(imgRes.data))
+    deviceId() {
+        return crypto.randomBytes(8).toString("hex");
+    }
 
-    const resultUrl = await magicEraser(tmpInput, prompt)
+    userAgent() {
+        const os = [
+            "Windows NT 10.0; Win64; x64",
+            "Macintosh; Intel Mac OS X 10_15_7",
+            "X11; Linux x86_64"
+        ][Math.floor(Math.random() * 3)];
 
-    fs.unlinkSync(tmpInput)
+        const ver = Math.floor(Math.random() * 40) + 100;
+        return `Mozilla/5.0 (${os}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ver}.0.0.0 Safari/537.36`;
+    }
 
-    res.json({
-      status: true,
-      result: {
-        prompt,
-        image: resultUrl
-      }
-    })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({
-      status: false,
-      message: "Internal Server Error"
-    })
-  }
+    viewport() {
+        const list = [
+            { w: 1366, h: 768 },
+            { w: 1920, h: 1080 },
+            { w: 1280, h: 720 }
+        ];
+        return list[Math.floor(Math.random() * list.length)];
+    }
+
+    platform() {
+        return ["Windows", "Linux", "macOS"][Math.floor(Math.random() * 3)];
+    }
+
+    lang() {
+        return ["en-US,en;q=0.9", "id-ID,id;q=0.9"][Math.floor(Math.random() * 2)];
+    }
+
+    async generate(prompt: string) {
+        const token = await this.solver.solve(this.baseURL, this.siteKey);
+
+        const vp = this.viewport();
+        const chromeVer = Math.floor(Math.random() * 30) + 110;
+
+        const res = await axios.post(`${this.baseURL}/api/image-generation`, {
+            prompt,
+            model: "nano-banana-2",
+            mode: "text-to-image",
+            numImages: 1,
+            aspectRatio: "1:1",
+            clientFingerprint: this.fingerprint(),
+            turnstileToken: token,
+            deviceId: this.deviceId()
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "*/*",
+                "Accept-Language": this.lang(),
+                "Origin": this.baseURL,
+                "Referer": `${this.baseURL}/`,
+                "User-Agent": this.userAgent(),
+                "Sec-Ch-Ua": `"Chromium";v="${chromeVer}"`,
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": `"${this.platform()}"`,
+                "Viewport-Width": vp.w.toString(),
+                "Viewport-Height": vp.h.toString()
+            }
+        });
+
+        return res.data;
+    }
 }
 
+// ✅ EXPORT HANDLER (WAJIB buat autoload lo)
+export default async function handler(req: Request, res: Response) {
+    try {
+        const { prompt } = req.query;
 
+        if (!prompt) {
+            return res.json({
+                status: false,
+                message: "prompt required"
+            });
+        }
+
+        const banana = new AIBanana();
+        const result = await banana.generate(prompt as string);
+
+        res.json({
+            status: true,
+            result
+        });
+
+    } catch (err: any) {
+        res.json({
+            status: false,
+            message: err.message
+        });
+    }
+}
