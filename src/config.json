@@ -3850,7 +3850,21 @@
             "required": true
           }
         ]
-      }
+      },
+      {
+  "name": "Pak Eko",
+  "endpoint": "/api/maker/pakeko",
+  "filename": "eko",
+  "method": "GET",
+  "description": "Membuat gambar sms pak Eko",
+  "params": [
+    {
+      "name": "text",
+      "required": true,
+      "description": "Teks yang ingin ditampilkan (max 40 karakter)"
+    }
+  ]
+}
     ],
     "random": [
       {
