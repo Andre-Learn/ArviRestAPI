@@ -19,7 +19,7 @@ export default async function handler(req: Request, res: Response) {
             });
         }
 
-        const templateUrl = "https://files.catbox.moe/cdxt0q.jpeg";
+        const templateUrl = "https://img2.pixhost.to/images/7136/714464475_alip-1776041340705.jpg";
 
         const img = await loadImage(templateUrl);
         const canvas = createCanvas(img.width, img.height);
