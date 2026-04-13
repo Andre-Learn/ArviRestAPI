@@ -19,7 +19,7 @@ export default async function handler(req: Request, res: Response) {
             });
         }
 
-        const templateUrl = "https://img2.pixhost.to/images/7136/714464475_alip-1776041340705.jpg";
+        const templateUrl = "https://img2.pixhost.to/images/7136/714465659_alip-1776041604068.jpg";
 
         const img = await loadImage(templateUrl);
         const canvas = createCanvas(img.width, img.height);
