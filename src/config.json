@@ -3854,7 +3854,7 @@
       {
   "name": "Pak Eko",
   "endpoint": "/api/maker/pakeko",
-  "filename": "eko",
+  "filename": "pakeko",
   "method": "GET",
   "description": "Membuat gambar sms pak Eko",
   "params": [
