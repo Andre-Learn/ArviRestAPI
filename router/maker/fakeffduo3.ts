@@ -56,10 +56,10 @@ export default async function fakeffduo(req: Request, res: Response) {
     ctx.strokeText(name1, 228, canvas.height - 379)
 
     ctx.fillStyle = "#ffffff"
-    ctx.fillText(name2, 890, canvas.height - 519)
+    ctx.fillText(name2, 890, canvas.height - 517)
 
     ctx.fillStyle = "#ffb300"
-    ctx.fillText(name2, 890, canvas.height - 519)
+    ctx.fillText(name2, 890, canvas.height - 517)
 
     ctx.strokeStyle = "rgba(0,0,0,0.8)"
     ctx.lineWidth = 1.6
