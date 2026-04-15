@@ -63,7 +63,7 @@ export default async function fakeffduo(req: Request, res: Response) {
 
     ctx.strokeStyle = "rgba(0,0,0,0.8)"
     ctx.lineWidth = 1.6
-    ctx.strokeText(name2, 890, canvas.height - 519)
+    ctx.strokeText(name2, 890, canvas.height - 517)
 
     const buffer = canvas.toBuffer("image/png")
 
