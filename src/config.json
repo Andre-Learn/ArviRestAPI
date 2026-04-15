@@ -1743,6 +1743,20 @@
     ],
     "Downloader": [
     {
+  "name": "All In One Downloader",
+  "endpoint": "/api/downloader/allinone",
+  "filename": "allinone",
+  "method": "GET",
+  "description": "Download video dari berbagai platform",
+  "params": [
+    {
+      "name": "url",
+      "required": true,
+      "description": "Link video (TikTok, dll)"
+    }
+  ]
+},
+    {
       "name": "TikTok Downloader",
       "endpoint": "/api/downloader/tiktokdl",
       "filename": "tiktokdl",
@@ -4139,6 +4153,22 @@
         "description": "ulzzanggirl endpoint",
         "params": []
       }
+    ],
+    "Tools": [
+    {
+  "name": "Save Web",
+  "endpoint": "/api/downloader/saveweb",
+  "filename": "saveweb",
+  "method": "GET",
+  "description": "Download website menjadi file ZIP",
+  "params": [
+    {
+      "name": "url",
+      "required": true,
+      "description": "Link website"
+    }
+  ]
+}
     ]
   }
 }
