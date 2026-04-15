@@ -42,28 +42,28 @@ export default async function fakeffduo(req: Request, res: Response) {
 
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height)
 
-    ctx.font = `bold 38px "TeutonNormal"`
+    ctx.font = `bold 50px "TeutonNormal"`
     ctx.textAlign = "center"
 
     ctx.fillStyle = "#ffffff"
-    ctx.fillText(name1, 212, canvas.height - 314)
+    ctx.fillText(name1, 228, canvas.height - 379)
 
     ctx.fillStyle = "#ffb300"
-    ctx.fillText(name1, 212, canvas.height - 314)
+    ctx.fillText(name1, 228, canvas.height - 379)
 
     ctx.strokeStyle = "rgba(0,0,0,0.8)"
     ctx.lineWidth = 1.6
-    ctx.strokeText(name1, 212, canvas.height - 314)
+    ctx.strokeText(name1, 228, canvas.height - 379)
 
     ctx.fillStyle = "#ffffff"
-    ctx.fillText(name2, 740, canvas.height - 434)
+    ctx.fillText(name2, 890, canvas.height - 519)
 
     ctx.fillStyle = "#ffb300"
-    ctx.fillText(name2, 740, canvas.height - 434)
+    ctx.fillText(name2, 890, canvas.height - 519)
 
     ctx.strokeStyle = "rgba(0,0,0,0.8)"
     ctx.lineWidth = 1.6
-    ctx.strokeText(name2, 740, canvas.height - 434)
+    ctx.strokeText(name2, 890, canvas.height - 519)
 
     const buffer = canvas.toBuffer("image/png")
 

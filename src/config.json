@@ -3263,6 +3263,30 @@
         ]
       },
       {
+        "name": "Fakeffduo3",
+        "endpoint": "/api/maker/fakeffduo3",
+        "filename": "fakeffduo3",
+        "method": "GET",
+        "description": "fakeffduo endpoint",
+        "params": [
+          {
+            "name": "name1",
+            "description": "name1",
+            "required": true
+          },
+          {
+            "name": "name2",
+            "description": "name2",
+            "required": true
+          },
+          {
+            "name": "bg",
+            "description": "bg",
+            "required": true
+          }
+        ]
+      },
+      {
         "name": "Fakeigstory",
         "endpoint": "/api/maker/fakeigstory",
         "filename": "fakeigstory",
