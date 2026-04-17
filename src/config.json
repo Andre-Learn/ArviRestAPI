@@ -818,6 +818,15 @@
          }
     ],
     "search": [
+    {
+  "name": "YouPorn Search",
+  "endpoint": "/api/nsfw/youpornsearch",
+  "filename": "youpornsearch",
+  "method": "GET",
+  "params": [
+    { "name": "q", "required": true }
+  ]
+},
   {
     "name": "Youtube Search",
     "endpoint": "/api/search/yts",
@@ -1751,6 +1760,15 @@
     }
   ]
 },
+{
+  "name": "YouPorn Get Video",
+  "endpoint": "/api/nsfw/youporndl",
+  "filename": "youporndl",
+  "method": "GET",
+  "params": [
+    { "name": "url", "required": true }
+  ]
+}
     {
       "name": "TikTok Downloader",
       "endpoint": "/api/downloader/tiktokdl",
