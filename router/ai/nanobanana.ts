@@ -6,15 +6,14 @@ class TurnstileSolver {
     solverURL = "https://cf-solver-renofc.my.id/api/solvebeta";
 
     async solve(url: string, siteKey: string, mode = "turnstile-min") {
-        const res = await axios.post(this.solverURL, {
-            url,
-            siteKey,
-            mode
+        const response = await axios.post(this.solverURL, {
+            url: url,
+            siteKey: siteKey,
+            mode: mode
         }, {
             headers: { "Content-Type": "application/json" }
         });
-
-        return res.data.token.result.token;
+        return response.data.token.result.token;
     }
 }
 
@@ -23,89 +22,92 @@ class AIBanana {
     siteKey = "0x4AAAAAAB2-fh9F_EBQqG2_";
     solver = new TurnstileSolver();
 
-    fingerprint() {
+    generateFingerprint() {
         return crypto.createHash("sha256")
             .update(crypto.randomBytes(32))
             .digest("hex");
     }
 
-    deviceId() {
+    generateDeviceId() {
         return crypto.randomBytes(8).toString("hex");
     }
 
-    userAgent() {
-        const os = [
+    generateRandomUserAgent() {
+        const osList = [
             "Windows NT 10.0; Win64; x64",
             "Macintosh; Intel Mac OS X 10_15_7",
-            "X11; Linux x86_64"
-        ][Math.floor(Math.random() * 3)];
-
-        const ver = Math.floor(Math.random() * 40) + 100;
-        return `Mozilla/5.0 (${os}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ver}.0.0.0 Safari/537.36`;
-    }
-
-    viewport() {
-        const list = [
-            { w: 1366, h: 768 },
-            { w: 1920, h: 1080 },
-            { w: 1280, h: 720 }
+            "X11; Linux x86_64",
+            "Windows NT 6.1; Win64; x64",
+            "Windows NT 6.3; Win64; x64"
         ];
-        return list[Math.floor(Math.random() * list.length)];
+        const os = osList[Math.floor(Math.random() * osList.length)];
+        const chromeVersion = Math.floor(Math.random() * 40) + 100;
+        return `Mozilla/5.0 (${os}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion}.0.0.0 Safari/537.36`;
     }
 
-    platform() {
-        return ["Windows", "Linux", "macOS"][Math.floor(Math.random() * 3)];
+    generateRandomViewport() {
+        const resolutions = [
+            { w: 1366, h: 768 }, { w: 1920, h: 1080 }, { w: 1440, h: 900 },
+            { w: 1536, h: 864 }, { w: 1280, h: 720 }, { w: 1600, h: 900 },
+            { w: 2560, h: 1440 }, { w: 1680, h: 1050 }, { w: 1024, h: 768 }
+        ];
+        return resolutions[Math.floor(Math.random() * resolutions.length)];
     }
 
-    lang() {
-        return ["en-US,en;q=0.9", "id-ID,id;q=0.9"][Math.floor(Math.random() * 2)];
+    generateRandomPlatform() {
+        return ["Windows", "Linux", "macOS", "Chrome OS"][Math.floor(Math.random() * 4)];
     }
 
-    async generate(prompt: string, image?: string) {
-        const token = await this.solver.solve(this.baseURL, this.siteKey);
+    generateRandomLanguage() {
+        return ["en-US,en;q=0.9", "id-ID,id;q=0.9,en-US;q=0.8", "en-GB,en;q=0.9", "es-ES,es;q=0.9"][Math.floor(Math.random() * 4)];
+    }
 
-        const vp = this.viewport();
-        const chromeVer = Math.floor(Math.random() * 30) + 110;
+    async generateImage(prompt: string) {
+        const turnstileToken = await this.solver.solve(this.baseURL, this.siteKey, "turnstile-min");
+        const fingerprint = this.generateFingerprint();
+        const deviceId = this.generateDeviceId();
+        const userAgent = this.generateRandomUserAgent();
+        const viewport = this.generateRandomViewport();
+        const platform = this.generateRandomPlatform();
+        const language = this.generateRandomLanguage();
+        const chromeVersion = Math.floor(Math.random() * 30) + 110;
 
-        const mode = image ? "image-to-image" : "text-to-image";
-
-        const payload: any = {
-            prompt,
+        const response = await axios.post(`${this.baseURL}/api/image-generation`, {
+            prompt: prompt,
             model: "nano-banana-2",
-            mode,
-            clientFingerprint: this.fingerprint(),
-            turnstileToken: token,
-            deviceId: this.deviceId()
-        };
-
-        if (image) payload.image = image;
-
-        const res = await axios.post(`${this.baseURL}/api/image-generation`, payload, {
+            mode: "text-to-image",
+            numImages: 1,
+            aspectRatio: "1:1",
+            clientFingerprint: fingerprint,
+            turnstileToken: turnstileToken,
+            deviceId: deviceId
+        }, {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "*/*",
-                "Accept-Language": this.lang(),
+                "Accept-Language": language,
                 "Origin": this.baseURL,
                 "Referer": `${this.baseURL}/`,
-                "User-Agent": this.userAgent(),
-                "Sec-Ch-Ua": `"Chromium";v="${chromeVer}"`,
+                "User-Agent": userAgent,
+                "Sec-Ch-Ua": `"Chromium";v="${chromeVersion}", "Not-A.Brand";v="24", "Google Chrome";v="${chromeVersion}"`,
                 "Sec-Ch-Ua-Mobile": "?0",
-                "Sec-Ch-Ua-Platform": `"${this.platform()}"`,
-                "Viewport-Width": vp.w.toString(),
-                "Viewport-Height": vp.h.toString()
+                "Sec-Ch-Ua-Platform": `"${platform}"`,
+                "Viewport-Width": viewport.w.toString(),
+                "Viewport-Height": viewport.h.toString(),
+                "X-Forwarded-For": `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
             }
         });
 
-        return res.data;
+        return response.data;
     }
 }
 
-// 🔥 HANDLER
+// 🔥 DIUBAH JADI API (INI DOANG PERUBAHANNYA)
 export default async function handler(req: Request, res: Response) {
     try {
-        // 🔥 FLEXIBLE PARAM (INI KUNCI FIX LO)
         const prompt = req.query.prompt as string;
-        const image = (req.query.image || req.query.imageUrl) as string;
 
         if (!prompt) {
             return res.json({
@@ -115,20 +117,17 @@ export default async function handler(req: Request, res: Response) {
         }
 
         const banana = new AIBanana();
-        const result = await banana.generate(prompt, image);
+        const result = await banana.generateImage(prompt);
 
         res.json({
             status: true,
-            mode: image ? "img2img" : "text2img",
             result
         });
 
     } catch (err: any) {
-        console.log("ERROR:", err.response?.data || err.message);
-
         res.json({
             status: false,
-            message: err.response?.data || err.message
+            message: err.message
         });
     }
 }

@@ -1732,11 +1732,6 @@
       "name": "prompt",
       "required": true,
       "description": "Prompt untuk generate/edit image"
-    },
-    {
-      "name": "imageUrl",
-      "required": false,
-      "description": "URL gambar untuk mode edit"
     }
   ]
 }
