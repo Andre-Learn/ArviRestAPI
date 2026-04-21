@@ -1,14 +1,14 @@
 {
   "settings": {
-    "creator": "KazzTzy",
-    "apiName": "ZFloryn-Z",
+    "creator": "Epen",
+    "apiName": "Arvi - API",
     "description": "A free and reliable API service designed for modern application development. Built with Node.js and TypeScript, delivering fast performance, stable endpoints, and easy integration.",
     "apiVersion": "v1.0",
     "visitors": 0,
-    "favicon": "https://raw.githubusercontent.com/kayzzaoshi-code/Uploader/main/file_1772878043301.jpeg",
-    "thumbnail": "https://raw.githubusercontent.com/kayzzaoshi-code/Uploader/main/file_1772878043301.jpeg",
-    "channelUrl": "https://whatsapp.com/channel/0029VbCEBa77j6g2KN3NYB3A",
-    "github": "https://github.com/ZFloryn-Z"
+    "favicon": "https://img2.pixhost.to/images/7043/713209145_alip-1775705281874.jpg",
+    "thumbnail": "https://img1.pixhost.to/images/9435/651370893_media.jpg",
+    "channelUrl": "https://whatsapp.com/channel/0029VadASSP4Y9lgVGCdwF0N",
+    "github": "https://github.com/Epen"
   },
   "tags": {
     "anime": [
@@ -818,6 +818,15 @@
          }
     ],
     "search": [
+    {
+  "name": "YouPorn Search",
+  "endpoint": "/api/nsfw/youpornsearch",
+  "filename": "youpornsearch",
+  "method": "GET",
+  "params": [
+    { "name": "q", "required": true }
+  ]
+},
   {
     "name": "Youtube Search",
     "endpoint": "/api/search/yts",
@@ -1720,9 +1729,46 @@
         "required": true
            }
         ]
-      }
+      },
+      {
+  "name": "Nano Banana AI",
+  "endpoint": "/api/ai/nanobanana",
+  "filename": "nanobanana",
+  "method": "GET",
+  "description": "Generate / edit image menggunakan Nano Banana AI",
+  "params": [
+    {
+      "name": "prompt",
+      "required": true,
+      "description": "Prompt untuk generate/edit image"
+    }
+  ]
+}
     ],
     "Downloader": [
+    {
+  "name": "All In One Downloader",
+  "endpoint": "/api/downloader/allinone",
+  "filename": "allinone",
+  "method": "GET",
+  "description": "Download video dari berbagai platform",
+  "params": [
+    {
+      "name": "url",
+      "required": true,
+      "description": "Link video (TikTok, dll)"
+    }
+  ]
+},
+{
+  "name": "YouPorn Get Video",
+  "endpoint": "/api/nsfw/youporndl",
+  "filename": "youporndl",
+  "method": "GET",
+  "params": [
+    { "name": "url", "required": true }
+  ]
+}
     {
       "name": "TikTok Downloader",
       "endpoint": "/api/downloader/tiktokdl",
@@ -3244,6 +3290,30 @@
         ]
       },
       {
+        "name": "Fakeffduo3",
+        "endpoint": "/api/maker/fakeffduo3",
+        "filename": "fakeffduo3",
+        "method": "GET",
+        "description": "fakeffduo endpoint",
+        "params": [
+          {
+            "name": "name1",
+            "description": "name1",
+            "required": true
+          },
+          {
+            "name": "name2",
+            "description": "name2",
+            "required": true
+          },
+          {
+            "name": "bg",
+            "description": "bg",
+            "required": true
+          }
+        ]
+      },
+      {
         "name": "Fakeigstory",
         "endpoint": "/api/maker/fakeigstory",
         "filename": "fakeigstory",
@@ -3831,7 +3901,21 @@
             "required": true
           }
         ]
-      }
+      },
+      {
+  "name": "Pak Eko",
+  "endpoint": "/api/maker/pakeko",
+  "filename": "pakeko",
+  "method": "GET",
+  "description": "Membuat gambar sms pak Eko",
+  "params": [
+    {
+      "name": "text",
+      "required": true,
+      "description": "Teks yang ingin ditampilkan (max 40 karakter)"
+    }
+  ]
+}
     ],
     "random": [
       {
@@ -4082,6 +4166,22 @@
         "description": "ulzzanggirl endpoint",
         "params": []
       }
+    ],
+    "Tools": [
+    {
+  "name": "Save Web",
+  "endpoint": "/api/downloader/saveweb",
+  "filename": "saveweb",
+  "method": "GET",
+  "description": "Download website menjadi file ZIP",
+  "params": [
+    {
+      "name": "url",
+      "required": true,
+      "description": "Link website"
+    }
+  ]
+}
     ]
   }
 }
