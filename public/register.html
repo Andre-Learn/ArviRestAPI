@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — ZFloryn API</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+<div class="hero-bg" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;">
+  <div class="hero-orb hero-orb-1" style="opacity:0.06"></div>
+  <div class="hero-orb hero-orb-2" style="opacity:0.05"></div>
+</div>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-bolt"></i></div>
+    ZFloryn API
+  </a>
+  <div class="nav-actions">
+    <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
+  </div>
+</nav>
+
+<div class="auth-page" style="position:relative;z-index:1;">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><i class="fa-solid fa-bolt"></i></div>
+      <div class="auth-logo-name">ZFloryn API</div>
+    </div>
+    <h1 class="auth-title">Buat akun baru</h1>
+    <p class="auth-sub">Daftar gratis dan dapatkan 500 request/hari</p>
+
+    <div id="alert-box" class="alert alert-error" style="display:none"></div>
+
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input type="text" class="form-input" id="username" placeholder="johndoe" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="email" placeholder="email@example.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="password" placeholder="Minimal 6 karakter" autocomplete="new-password">
+    </div>
+
+    <button class="btn btn-primary btn-block" id="reg-btn" onclick="doRegister()" style="margin-top:8px;">
+      <i class="fa-solid fa-user-plus"></i> Daftar Sekarang
+    </button>
+
+    <div class="auth-footer" style="margin-top:20px;">
+      Sudah punya akun? <a href="/login">Login di sini</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="platform.js"></script>
+<script>
+if (Auth.isLoggedIn()) window.location.href = '/dashboard';
+
+async function doRegister() {
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('reg-btn');
+  const alertBox = document.getElementById('alert-box');
+
+  alertBox.style.display = 'none';
+
+  if (!username || !email || !password) {
+    alertBox.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Semua field wajib diisi.';
+    alertBox.style.display = 'flex';
+    return;
+  }
+  if (password.length < 6) {
+    alertBox.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Password minimal 6 karakter.';
+    alertBox.style.display = 'flex';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...';
+
+  const { ok, data } = await apiRequest('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ username, email, password })
+  });
+
+  if (ok && data.status) {
+    Auth.setAuth(data.token, data.user);
+    showToast('Registrasi berhasil! Selamat datang 🎉');
+    setTimeout(() => window.location.href = '/dashboard', 900);
+  } else {
+    alertBox.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ' + (data.message || 'Registrasi gagal');
+    alertBox.style.display = 'flex';
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Daftar Sekarang';
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+</script>
+</body>
+</html>

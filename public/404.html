@@ -1,32 +1,41 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <title>404 - Page Not Found</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffffff;
-            overflow: hidden;
-            touch-action: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — ZFloryn API</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="platform.css">
+  <style>
+    .hero-bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+    .notfound{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;position:relative;z-index:1;}
+    .err-code{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(80px,15vw,140px);line-height:1;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;}
+    .err-title{font-family:'Syne',sans-serif;font-weight:700;font-size:28px;margin-bottom:12px;}
+    .err-sub{font-size:15px;color:var(--text2);margin-bottom:36px;}
+  </style>
 </head>
 <body>
-    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
-    
-    <dotlottie-wc 
-        src="https://lottie.host/2c82a741-8bd3-48d9-bcce-bbc8670e3e3e/dSN8796UGe.lottie" 
-        style="width: 300px; height: 300px;" 
-        autoplay 
-        loop>
-    </dotlottie-wc>
+<div class="hero-bg">
+  <div class="hero-orb hero-orb-1" style="opacity:0.06"></div>
+  <div class="hero-orb hero-orb-2" style="opacity:0.05"></div>
+  <div class="grid-bg" style="opacity:0.3"></div>
+</div>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-bolt"></i></div>
+    ZFloryn API
+  </a>
+</nav>
+<div class="notfound">
+  <div class="err-code">404</div>
+  <h1 class="err-title">Halaman tidak ditemukan</h1>
+  <p class="err-sub">Endpoint atau halaman yang kamu cari tidak ada.<br>Periksa URL atau kembali ke halaman utama.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <a href="/" class="btn btn-primary"><i class="fa-solid fa-house"></i> Ke Beranda</a>
+    <a href="/docs" class="btn btn-ghost"><i class="fa-solid fa-book"></i> Lihat Docs</a>
+  </div>
+</div>
+<script src="platform.js"></script>
 </body>
 </html>
