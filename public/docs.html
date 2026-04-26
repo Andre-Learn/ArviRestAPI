@@ -1,325 +1,948 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Documentation — ZFloryn API</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="platform.css">
-  <style>
-    body { overflow: hidden; }
-    .docs-wrapper { display: flex; height: 100vh; padding-top: 65px; }
-    .docs-sidebar { width: 260px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-    .sidebar-top { padding: 14px; border-bottom: 1px solid var(--border); }
-    .sidebar-scroll { flex: 1; overflow-y: auto; padding-bottom: 20px; }
-    .sidebar-scroll::-webkit-scrollbar { width: 4px; }
-    .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-    .docs-main { flex: 1; overflow-y: auto; }
-    .docs-main::-webkit-scrollbar { width: 6px; }
-    .docs-main::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-    .docs-inner { padding: 36px 48px; max-width: 860px; }
-    .intro-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 32px; }
-    .intro-card h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px; margin-bottom: 10px; }
-    .intro-card p { font-size: 14px; color: var(--text2); line-height: 1.7; }
-    .base-url-box { margin-top: 20px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 13px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .base-url-val { color: var(--purple2); }
-    .copy-small { background: var(--surface2); border: 1px solid var(--border2); color: var(--text3); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-family: 'DM Mono', monospace; cursor: pointer; transition: all .2s; flex-shrink: 0; }
-    .copy-small:hover { color: var(--text); border-color: var(--purple); }
-    .cat-section { margin-bottom: 40px; }
-    .cat-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-    .cat-icon { width: 32px; height: 32px; border-radius: 9px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 14px; }
-    .cat-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; }
-    .cat-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); background: var(--surface2); padding: 3px 8px; border-radius: 999px; }
-    .ep-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-    .ep-header { padding: 14px 18px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background .2s; user-select: none; }
-    .ep-header:hover { background: var(--surface2); }
-    .ep-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 15px; flex: 1; }
-    .ep-path-small { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); margin-top: 2px; }
-    .ep-toggle { color: var(--text3); font-size: 12px; transition: transform .3s; }
-    .ep-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--border); }
-    .ep-block.open .ep-body { display: block; }
-    .ep-block.open .ep-toggle { transform: rotate(180deg); }
-    .ep-desc { font-size: 14px; color: var(--text2); margin: 14px 0 16px; line-height: 1.6; }
-    .params-wrap { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
-    .params-label { padding: 8px 14px; font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); background: var(--bg2); border-bottom: 1px solid var(--border); }
-    .param-row { display: grid; grid-template-columns: 130px 80px 90px 1fr; gap: 10px; padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--border); }
-    .param-row:last-child { border-bottom: none; }
-    .param-name { font-family: 'DM Mono', monospace; color: var(--purple2); }
-    .param-type { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--cyan); }
-    .req-badge { font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 4px; display: inline-block; }
-    .req-yes { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-    .req-no { background: var(--surface2); color: var(--text3); border: 1px solid var(--border2); }
-    .param-desc { font-size: 13px; color: var(--text2); }
-    .tabs { display: flex; gap: 4px; margin-bottom: 10px; }
-    .tab { padding: 6px 14px; border-radius: 7px; font-size: 12px; font-family: 'DM Mono', monospace; cursor: pointer; border: 1px solid var(--border2); color: var(--text3); background: var(--surface); transition: all .2s; }
-    .tab.active { background: var(--surface2); color: var(--text); border-color: var(--purple); }
-    .code-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .code-box-header { padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-    .code-box-lang { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); }
-    .code-box pre { padding: 14px; font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.75; overflow-x: auto; white-space: pre; color: var(--text2); margin: 0; }
-    .try-btn { background: var(--grad2); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 12px; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; }
-    .try-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(139,92,246,0.3); }
-    .try-result { margin-top: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); display: none; max-height: 280px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.7; }
-    .try-result.show { display: block; }
-    .sidebar-cat { padding: 10px 16px 4px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); display: flex; align-items: center; justify-content: space-between; }
-    .sidebar-ep-link { display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 20px; font-size: 13px; color: var(--text2); text-decoration: none; transition: all .15s; cursor: pointer; border-left: 2px solid transparent; }
-    .sidebar-ep-link:hover { color: var(--text); background: var(--surface); border-left-color: var(--border2); }
-    .sidebar-ep-link.active { color: var(--purple2); background: rgba(139,92,246,0.06); border-left-color: var(--purple); }
-    .loading-dots { display: inline-flex; gap: 4px; }
-    .loading-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--purple2); animation: dotpulse 1.2s infinite; }
-    .loading-dots span:nth-child(2) { animation-delay: .2s; }
-    .loading-dots span:nth-child(3) { animation-delay: .4s; }
-    @keyframes dotpulse { 0%,80%,100%{transform:scale(0.6);opacity:0.5;} 40%{transform:scale(1);opacity:1;} }
-    @media (max-width: 800px) {
-      .docs-sidebar { display: none; }
-      .docs-inner { padding: 24px 16px; }
-      body { overflow: auto; }
-      .docs-wrapper { height: auto; flex-direction: column; }
-      .docs-main { overflow: auto; }
-      .param-row { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arvi | Documents</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Quicksand"', 'sans-serif'],
+                    },
+                    colors: {
+                        'fmn-blue': '#89CFF0',
+                        'fmn-dark': '#6495ED',
+                        'fmn-purple': '#B39DDB',
+                        'fmn-bg': '#F0F8FF',
+                        'term-bg': '#1e1e1e', 
+                        'term-text': '#d4d4d4',
+                        'success-glow': '#10b981',
+                        'error-glow': '#ef4444',
+                    },
+                    boxShadow: {
+                        'soft': '4px 4px 10px rgba(137, 207, 240, 0.4)',
+                        'glow-success': '0 0 15px rgba(16, 185, 129, 0.5)',
+                        'glow-error': '0 0 15px rgba(239, 68, 68, 0.5)',
+                        'neon': '0 0 20px rgba(137, 207, 240, 0.6)',
+                    },
+                    animation: {
+                        'blink': 'blink 1s step-end infinite',
+                        'slide-down': 'slideDown 0.3s ease-out forwards',
+                        'marquee': 'marquee 15s linear infinite',
+                        'slide-in-right': 'slideInRight 0.5s ease-out forwards',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                    },
+                    keyframes: {
+                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
+                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        marquee: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-150%)' } },
+                        slideInRight: { '0%': { opacity: '0', transform: 'translateX(20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        #fixed-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -50;
+            background-color: #F0F8FF;
+            background-image: url('https://c.termai.cc/i181/aGwK.png'), url('https://c.termai.cc/i155/wbV.jpg');
+            background-position: bottom right, center center;
+            background-size: 85% auto, cover;
+            background-repeat: no-repeat;
+            opacity: 0.8;
+        }
+        @media (max-width: 768px) {
+            #fixed-bg { background-size: 110% auto, cover; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #89CFF0; border-radius: 4px; border: 2px solid #fff; }
+        
+        .json-key { color: #f87171; font-weight: bold; }
+        .json-string { color: #a3e635; }
+        .json-number { color: #60a5fa; font-weight: bold; }
+        .json-boolean { color: #c084fc; font-style: italic; }
+        .json-null { color: #94a3b8; }
+        
+        /* Removed CRT Text Shadow and Lines */
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border: none; border-radius: 2px; }
+        
+        /* Removed .terminal-scan animation */
+        
+        .response-area {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top center;
+        }
+        
+        .response-area.showing {
+            animation: slideInRight 0.5s ease-out, fadeInUp 0.6s ease-out;
+        }
+        
+        .response-area.success {
+            border-color: #10b981 !important;
+        }
+        
+        .response-area.error {
+            border-color: #ef4444 !important;
+        }
+        
+        .json-key, .json-string, .json-number, .json-boolean, .json-null {
+            transition: all 0.3s ease;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background-color: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: blink 1.5s infinite;
+        }
+        
+        .status-error {
+            background-color: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+            animation: blink 1.5s infinite;
+        }
+        
+        .status-waiting {
+            background-color: #f59e0b;
+            box-shadow: 0 0 10px #f59e0b;
+            animation: blink 1.5s infinite;
+        }
+
+        /* --- SOFT BUTTON CSS START --- */
+        .soft-btn {
+            --button-raise-level: 6px;
+            --press-inset: 3px;
+            --press-compensated: 0px;
+            --button-hover-pressure: 1.5;
+            --transform-speed: 160ms;
+            --radius: 12px;
+            --glare-rgb: 255, 255, 255;
+            --glare-alpha: 0.2;
+            --glare-width: 20;
+
+            position: relative;
+            border: none;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            user-select: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            display: block;
+        }
+
+        .soft-btn__wrapper {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        /* Side wall */
+        .soft-btn__wrapper::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: calc(100% - var(--button-raise-level));
+            background: var(--side-color);
+            border-radius: var(--radius);
+            z-index: 1;
+        }
+
+        /* Face */
+        .soft-btn__content {
+            position: relative;
+            width: 100%;
+            height: calc(100% - var(--button-raise-level));
+            background: var(--surface-color);
+            color: var(--text-color);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(0);
+            transition: transform var(--transform-speed) ease-out;
+            will-change: transform;
+            backface-visibility: hidden;
+            transform-origin: center;
+            z-index: 2;
+            border: var(--border-width) solid var(--border-color);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+        }
+
+        .soft-btn__inner {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            z-index: 4;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Hover deformation */
+        .soft-btn--middle .soft-btn__content { transform: translateY(calc(1px * var(--button-hover-pressure))); }
+        .soft-btn--left .soft-btn__content { transform: skewY(calc(-1deg * var(--button-hover-pressure))); }
+        .soft-btn--right .soft-btn__content { transform: skewY(calc(1deg * var(--button-hover-pressure))); }
+
+        /* Pressed */
+        .soft-btn--active .soft-btn__content {
+            transform: translateY(var(--press-inset));
+            transition: transform calc(var(--transform-speed) * 0.8) ease-out;
+        }
+        
+        .soft-btn--active.soft-btn--left .soft-btn__content {
+            transform: skewY(calc(-1deg * var(--button-hover-pressure))) translateY(var(--press-inset));
+        }
+        
+        .soft-btn--active.soft-btn--right .soft-btn__content {
+            transform: skewY(calc(1deg * var(--button-hover-pressure))) translateY(var(--press-inset));
+        }
+
+        /* LAVENDER VARIANT */
+        .variant-lavender {
+            --surface-color: #cec3fd;
+            --side-color: #b489ff;
+            --text-color: #2e1065;
+            --border-color: #a36eff;
+            --border-width: 2px;
+        }
+        /* --- SOFT BUTTON CSS END --- */
+
+        /* --- LOGIKA OUTLINE BERPUTAR --- */
+        @keyframes outlineSpin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .category-btn {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        .category-btn.animating { border-color: transparent !important; }
+
+        .category-btn.animating::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent 0%, #89CFF0 25%, transparent 50%, #B39DDB 75%, transparent 100%);
+            z-index: -2; animation: outlineSpin 0.5s linear infinite;
+        }
+
+        .category-btn.animating::after {
+            content: ''; position: absolute; inset: 3px; background: white; border-radius: 0.6rem; z-index: -1;
+        }
+
+    </style>
 </head>
-<body>
-<nav class="nav">
-  <a href="/" class="nav-logo">
-    <div class="nav-logo-icon"><i class="fa-solid fa-bolt"></i></div>
-    ZFloryn API
-  </a>
-  <div class="nav-links">
-    <a href="/" class="nav-link">Home</a>
-    <a href="/docs" class="nav-link active">Docs</a>
-    <a href="/pricing" class="nav-link">Pricing</a>
-    <a href="/dashboard" class="nav-link" id="nav-dashboard-link" style="display:none">Dashboard</a>
-  </div>
-  <div class="nav-actions">
-    <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
-    <a href="/login" class="btn btn-ghost btn-sm" id="nav-login-btn">Login</a>
-    <a href="/register" class="btn btn-primary btn-sm" id="nav-register-btn">Get Started</a>
-    <a href="/dashboard" class="btn btn-primary btn-sm" id="nav-dash-btn" style="display:none">Dashboard</a>
-    <button class="nav-mobile-toggle" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
-  </div>
-</nav>
+<body class="text-slate-700 min-h-screen flex flex-col font-sans selection:bg-fmn-blue selection:text-white">
+    
+    <div id="fixed-bg"></div>
 
-<div class="docs-wrapper">
-  <aside class="docs-sidebar">
-    <div class="sidebar-top">
-      <input type="text" class="docs-search-input" placeholder="Cari endpoint..." id="sidebar-search" oninput="filterSidebar(this.value)">
+    <nav class="border-b border-fmn-blue/50 bg-white/95 backdrop-blur-sm sticky top-0 z-[60] shadow-sm w-full">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4 justify-between">
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="/" class="w-10 h-10 bg-fmn-blue text-white flex items-center justify-center rounded-full hover:bg-fmn-dark hover:scale-105 transition-all shadow-md cursor-pointer border border-fmn-dark/20">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 id="nav-title" class="font-bold text-xl tracking-tight text-fmn-dark uppercase">ARVI</h1>
+                    <span class="text-[10px] font-bold text-fmn-purple tracking-widest">Arvi rest API</span>
+                </div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-xl mx-auto overflow-hidden h-8 bg-gradient-to-r from-fmn-blue to-fmn-purple rounded-full flex items-center relative shadow-inner mx-4">
+                <div id="running-text" class="text-white text-xs font-mono font-bold uppercase tracking-widest px-4 whitespace-nowrap animate-marquee inline-block min-w-full">
+                    SYSTEM ONLINE • WAITING FOR CONFIG...
+                </div>
+            </div>
+
+            <a href="https://github.com/Epen" target="_blank" class="w-10 h-10 border border-fmn-blue/50 bg-white text-fmn-dark hover:bg-fmn-blue hover:text-white flex items-center justify-center rounded-full shadow-sm transition-all">
+                <i class="fa-brands fa-github text-xl"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 grid lg:grid-cols-12 gap-8 items-start relative z-10 overflow-hidden">
+        
+        <aside class="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-6 h-fit z-40 w-full max-w-full">
+            
+            <div class="bg-term-bg border-2 border-slate-600 shadow-xl rounded-lg overflow-hidden flex flex-col h-[420px] group relative font-mono text-xs">
+                <div class="bg-[#2d2d2d] px-3 py-2 flex items-center gap-2 border-b border-gray-700 select-none">
+                    <div class="flex gap-1.5">
+                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                    </div>
+                    <span class="text-[10px] text-gray-400 font-bold ml-2">node &mdash; 80x24</span>
+                </div>
+                
+                <div id="term-logs" class="p-3 text-gray-300 overflow-y-auto flex-1 custom-scrollbar space-y-1 leading-relaxed"></div>
+                
+                <div id="term-input-line" class="hidden px-3 pb-2 pt-1 border-t border-gray-700 bg-term-bg">
+                    <span class="text-green-500 font-bold mr-1">root@epen:~/arvi$</span>
+                    <span class="inline-block w-2 h-4 bg-gray-400 align-middle animate-blink"></span>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <input type="text" id="search-input" placeholder="Search Endpoint..." 
+                    class="w-full h-12 border-2 border-fmn-blue/60 px-5 pl-12 font-bold text-sm text-slate-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-fmn-blue/50 focus:border-fmn-dark transition-all placeholder:text-slate-400 bg-white/90 backdrop-blur hover:shadow-neon hover:border-fmn-blue">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-fmn-blue"></i>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-sm border-2 border-white p-5 shadow-soft rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-20 h-20 bg-fmn-blue/10 rounded-full blur-xl"></div>
+                <div class="space-y-3 relative z-10">
+                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
+                        <span>TIME (WIB)</span>
+                        <span id="server-time" class="text-fmn-dark font-mono">--:--:--</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
+                        <span>DATE</span>
+                        <span id="server-date" class="font-mono">--/--/----</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
+                        <span>VISITOR</span>
+                        <span id="stat-visitors" class="text-fmn-purple">0</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="lg:col-span-8 min-h-[50vh] w-full max-w-full">
+            <div id="api-container" class="space-y-4 opacity-0 translate-y-4 transition-all duration-700 w-full"></div>
+            
+            <div id="no-results" class="hidden flex-col items-center justify-center py-20 text-center opacity-70">
+                <i class="fa-solid fa-box-open text-5xl mb-3 text-fmn-blue"></i>
+                <p class="font-bold text-lg text-slate-400">No Data Found</p>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="custom-toast" class="fixed bottom-6 right-6 z-[100] transform translate-y-32 opacity-0 transition-all duration-300">
+        <div class="bg-white text-slate-700 px-5 py-3 font-bold text-sm shadow-xl rounded-xl flex items-center gap-3 border-2 border-fmn-blue animate-slide-in-right">
+            <div class="w-6 h-6 bg-fmn-blue text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></div>
+            <span id="toast-message">SUCCESS</span>
+        </div>
     </div>
-    <div class="sidebar-scroll" id="sidebar-nav">
-      <div style="padding:20px 16px;font-size:13px;color:var(--text3);font-family:'DM Mono',monospace;">Memuat...</div>
-    </div>
-  </aside>
 
-  <main class="docs-main">
-    <div class="docs-inner">
-      <div class="intro-card">
-        <h1>API Documentation</h1>
-        <p>Selamat datang di dokumentasi ZFloryn API. Akses ratusan endpoint dengan mudah menggunakan API key personal kamu. Tambahkan parameter <code style="font-family:'DM Mono';color:var(--purple2);background:var(--surface2);padding:2px 6px;border-radius:4px;">apikey</code> pada setiap request.</p>
-        <div class="base-url-box">
-          <div>
-            <span style="color:var(--text3);font-size:10px;font-family:'DM Mono',monospace;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px;">Base URL</span>
-            <span class="base-url-val" id="base-url-display">loading...</span>
-          </div>
-          <button class="copy-small" onclick="copyBaseUrl()"><i class="fa-regular fa-copy"></i> Copy</button>
-        </div>
-      </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', init);
+        let globalConfig = null;
+        let toastTimeout;
 
-      <div style="margin-bottom:32px;">
-        <div class="section-label">Quick Start</div>
-        <div class="code-box">
-          <div class="code-box-header">
-            <span class="code-box-lang">EXAMPLE REQUEST</span>
-            <button class="copy-small" id="qs-copy-btn">Copy</button>
-          </div>
-          <pre id="qs-code">GET /api/ai/gpt?q=Hello&amp;apikey=<span style="color:var(--purple2)">YOUR_API_KEY</span></pre>
-        </div>
-      </div>
+        function isMobileDevice() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
 
-      <div id="docs-body">
-        <div style="display:flex;align-items:center;gap:12px;padding:40px 0;color:var(--text3);font-family:'DM Mono',monospace;font-size:13px;">
-          <div class="loading-dots"><span></span><span></span><span></span></div>
-          Memuat dokumentasi...
-        </div>
-      </div>
-    </div>
-  </main>
-</div>
+        async function init() {
+            if (isMobileDevice()) document.body.classList.add('is-mobile');
+            if (document.getElementById('term-logs')) {
+                try {
+                    const response = await fetch('/config');
+                    globalConfig = await response.json();
+                    setUi(globalConfig);
+                    loadEnd(globalConfig.tags);
+                    startWIBClock();
+                    await evelyne(globalConfig);
+                    loadReminder();
+                    setSearch();
+                } catch (e) {
+                    document.getElementById('term-logs').innerHTML = `<span class="text-red-400 font-bold px-1">SYSTEM FAILURE</span><br>${e.message}`;
+                }
+            }
+        }
 
-<div class="toast" id="toast"></div>
-<script src="platform.js"></script>
-<script>
-const BASE = window.location.origin;
-document.getElementById('base-url-display').textContent = BASE;
-document.getElementById('qs-copy-btn').onclick = () => copyText(BASE + '/api/ai/gpt?q=Hello&apikey=YOUR_KEY');
+        // --- BUTTON PHYSICS LOGIC START ---
+        function initSoftButtons() {
+            const buttons = document.querySelectorAll('.soft-btn');
 
-function copyBaseUrl() { navigator.clipboard.writeText(BASE).then(() => showToast('Base URL disalin!')); }
-function copyText(t) { navigator.clipboard.writeText(t).then(() => showToast('Disalin!')); }
+            buttons.forEach(btn => {
+                const handlePointer = (e) => {
+                    if (e.type === 'pointerleave' || e.type === 'pointercancel' || e.type === 'pointerup') {
+                        btn.classList.remove('soft-btn--active', 'soft-btn--left', 'soft-btn--right', 'soft-btn--middle');
+                        try { btn.releasePointerCapture(e.pointerId); } catch(err){}
+                        return;
+                    }
 
-const CAT_ICONS = {
-  ai:{icon:'fa-robot',color:'#8b5cf6'}, anime:{icon:'fa-star',color:'#f59e0b'},
-  downloader:{icon:'fa-download',color:'#3b82f6'}, search:{icon:'fa-magnifying-glass',color:'#10b981'},
-  tools:{icon:'fa-wrench',color:'#06b6d4'}, random:{icon:'fa-shuffle',color:'#ec4899'},
-  fun:{icon:'fa-face-laugh',color:'#f97316'}, maker:{icon:'fa-paintbrush',color:'#a855f7'},
-  nsfw:{icon:'fa-lock',color:'#64748b'}, asupan:{icon:'fa-image',color:'#e11d48'},
-  cecan:{icon:'fa-heart',color:'#f43f5e'},
-};
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const w = rect.width;
 
-let _eps = [];
+                    // Set capture on down
+                    if(e.type === 'pointerdown') {
+                        btn.classList.add('soft-btn--active');
+                        try { btn.setPointerCapture(e.pointerId); } catch(err){}
+                    }
 
-function hl(json) {
-  return json
-    .replace(/("[\w\s]+")\s*:/g,'<span style="color:var(--purple2)">$1</span>:')
-    .replace(/:\s*(".*?")/g,': <span style="color:var(--amber)">$1</span>')
-    .replace(/:\s*(true|false)/g,': <span style="color:var(--green)">$1</span>')
-    .replace(/:\s*(-?\d+\.?\d*)/g,': <span style="color:var(--cyan)">$1</span>');
-}
+                    // Calculate direction
+                    btn.classList.remove('soft-btn--left', 'soft-btn--right', 'soft-btn--middle');
+                    if (x < w * 0.33) btn.classList.add('soft-btn--left');
+                    else if (x > w * 0.66) btn.classList.add('soft-btn--right');
+                    else btn.classList.add('soft-btn--middle');
+                };
 
-function toggleEp(id) { document.getElementById(id).classList.toggle('open'); }
+                btn.addEventListener('pointerdown', handlePointer);
+                btn.addEventListener('pointermove', (e) => {
+                    if(btn.classList.contains('soft-btn--active')) handlePointer(e);
+                });
+                btn.addEventListener('pointerup', handlePointer);
+                btn.addEventListener('pointerleave', handlePointer);
+                btn.addEventListener('pointercancel', handlePointer);
+            });
+        }
+        // --- BUTTON PHYSICS LOGIC END ---
 
-function switchTab(epId, tab) {
-  ['curl','js','try'].forEach(t => {
-    const el = document.getElementById('tab-' + t + '-' + epId);
-    if (el) el.style.display = (t === tab) ? 'block' : 'none';
-  });
-  document.querySelectorAll('#tabs-' + epId + ' .tab').forEach((t, i) => {
-    t.classList.toggle('active', ['curl','js','try'][i] === tab);
-  });
-}
+        function messeg(msg) {
+            const toast = document.getElementById('custom-toast');
+            const msgBox = document.getElementById('toast-message');
+            if(!toast || !msgBox) return;
+            msgBox.innerText = msg;
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            toast.classList.add('animate-fade-in-up');
+            
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { 
+                toast.classList.add('translate-y-32', 'opacity-0');
+                toast.classList.remove('animate-fade-in-up');
+            }, 3000);
+        }
 
-async function tryEndpoint(idx) {
-  const ep = _eps[idx];
-  const id = 'ep-' + idx;
-  const res = document.getElementById('try-result-' + id);
-  res.className = 'try-result show';
-  res.textContent = 'Memuat...';
-  const path = ep.endpoint || '/api/' + ep.cat + '/' + ep.filename;
-  const q = (ep.params||[]).map(p => p.name + '=test').join('&');
-  try {
-    const r = await fetch(path + (q ? '?' + q : ''));
-    const text = await r.text();
-    try { res.innerHTML = hl(JSON.stringify(JSON.parse(text), null, 2)); }
-    catch { res.textContent = text.slice(0, 600); }
-  } catch(e) { res.textContent = 'Error: ' + e.message; }
-}
+        function startWIBClock() {
+            const timeEl = document.getElementById('server-time');
+            const dateEl = document.getElementById('server-date');
+            updateTime(); setInterval(updateTime, 1000);
+            function updateTime() {
+                const now = new Date();
+                if(timeEl) {
+                    timeEl.innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour12: false});
+                }
+                if(dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', {timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric'});
+            }
+        }
 
-function buildEpHtml(ep, idx) {
-  const path = ep.endpoint || '/api/' + ep.cat + '/' + ep.filename;
-  const method = (ep.method || 'GET').toUpperCase();
-  const params = ep.params || [];
-  const id = 'ep-' + idx;
+        async function loadReminder() {
+            try {
+                const req = await fetch('../src/reminder.json');
+                const data = await req.json();
+                if(data?.message) {
+                    const runningText = document.getElementById('running-text');
+                    runningText.innerText = data.message.toUpperCase();
+                }
+            } catch (e) {}
+        }
 
-  const paramsHtml = params.length ? `
-    <div class="params-wrap">
-      <div class="params-label">Parameters</div>
-      ${params.map(p => `
-        <div class="param-row">
-          <span class="param-name">${p.name}</span>
-          <span class="param-type">${p.type||'string'}</span>
-          <span><span class="req-badge ${p.required!==false?'req-yes':'req-no'}">${p.required!==false?'Required':'Optional'}</span></span>
-          <span class="param-desc">${p.description||p.desc||'—'}</span>
-        </div>`).join('')}
-    </div>` : '';
+        function terminalLog(message, type = 'info') {
+            const logs = document.getElementById('term-logs');
+            if(!logs) return;
+            const line = document.createElement('div');
+            
+            let color = "text-gray-300";
+            if(type === 'error') color = "text-red-400";
+            else if(type === 'success') color = "text-green-400";
+            else if(type === 'warn') color = "text-yellow-400";
+            else if(type === 'cmd') color = "text-white font-bold";
+            else if(type === 'system') color = "text-gray-500";
+            
+            // Removed animate-slide-in-right for static linux feel
+            line.className = `${color} break-all`;
+            line.innerHTML = message;
+            logs.appendChild(line);
+            logs.scrollTop = logs.scrollHeight;
+        }
 
-  const curlCmd = `curl "${BASE}${path}?${params.map(p=>p.name+'=example').join('&')}${params.length?'&':''}apikey=YOUR_KEY"`;
-  const jsCode = `const res = await fetch('${BASE}${path}?${params.map(p=>p.name+'=example').join('&')}${params.length?'&':''}apikey=YOUR_KEY');\nconst data = await res.json();\nconsole.log(data);`;
-  const safeJs = jsCode.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        async function evelyne(config) {
+            const logs = document.getElementById('term-logs');
+            if(!logs) return;
+            
+            // --- TYPING ANIMATION FOR CMD ---
+            const cmdLine = document.createElement('div');
+            cmdLine.className = 'text-gray-300 break-all';
+            cmdLine.innerHTML = '<span class="text-green-500">root@epen:~/arvi$</span> ';
+            
+            const typeSpan = document.createElement('span');
+            typeSpan.className = 'text-white font-bold';
+            cmdLine.appendChild(typeSpan);
+            logs.appendChild(cmdLine);
 
-  return `<div class="ep-block" id="${id}">
-    <div class="ep-header" onclick="toggleEp('${id}')">
-      <span class="method-badge method-${method.toLowerCase()}">${method}</span>
-      <div style="flex:1;min-width:0">
-        <div class="ep-title">${ep.name||ep.filename}</div>
-        <div class="ep-path-small">${path}</div>
-      </div>
-      <i class="fa-solid fa-chevron-down ep-toggle"></i>
-    </div>
-    <div class="ep-body">
-      <p class="ep-desc">${ep.description||'Endpoint '+(ep.name||ep.filename)}</p>
-      ${paramsHtml}
-      <div class="tabs" id="tabs-${id}">
-        <div class="tab active" onclick="switchTab('${id}','curl')">cURL</div>
-        <div class="tab" onclick="switchTab('${id}','js')">JavaScript</div>
-        <div class="tab" onclick="switchTab('${id}','try')">Try It</div>
-      </div>
-      <div id="tab-curl-${id}" class="code-box">
-        <div class="code-box-header">
-          <span class="code-box-lang">cURL</span>
-          <button class="copy-small" onclick="copyText('${curlCmd.replace(/'/g,"\\'")}')">Copy</button>
-        </div>
-        <pre>${curlCmd.replace(/&/g,'&amp;')}</pre>
-      </div>
-      <div id="tab-js-${id}" class="code-box" style="display:none">
-        <div class="code-box-header">
-          <span class="code-box-lang">JavaScript</span>
-          <button class="copy-small" onclick="copyText(\`${jsCode.replace(/`/g,"'")}\`)">Copy</button>
-        </div>
-        <pre>${safeJs}</pre>
-      </div>
-      <div id="tab-try-${id}" style="display:none">
-        <div style="margin-top:4px">
-          <button class="try-btn" onclick="tryEndpoint(${idx})"><i class="fa-solid fa-play"></i> Run Request</button>
-          <div class="try-result" id="try-result-${id}"></div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
+            const commandText = "npm run dev";
+            for(let i=0; i < commandText.length; i++) {
+                typeSpan.textContent += commandText.charAt(i);
+                await new Promise(r => setTimeout(r, 80)); // Typing delay
+            }
+            // ---------------------------------
 
-async function buildDocs() {
-  try {
-    const r = await fetch('/api'); const d = await r.json();
-    const tags = d.endpoints || {};
-    const docsBody = document.getElementById('docs-body');
-    const sidebarNav = document.getElementById('sidebar-nav');
-    docsBody.innerHTML = ''; sidebarNav.innerHTML = '';
-    let gi = 0;
-    for (const [cat, eps] of Object.entries(tags)) {
-      if (!Array.isArray(eps)||eps.length===0) continue;
-      const ci = CAT_ICONS[cat]||{icon:'fa-code',color:'var(--text3)'};
-      // sidebar
-      const sd = document.createElement('div');
-      sd.innerHTML = `
-        <div class="sidebar-cat"><span>${cat}</span><span style="background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:9px;">${eps.length}</span></div>
-        ${eps.map((ep,i) => `<div class="sidebar-ep-link" data-search="${(ep.name||ep.filename)+' '+cat}" onclick="scrollTo_('ep-${gi+i}',this)">
-          <span class="method-badge method-${(ep.method||'get').toLowerCase()}" style="font-size:8px;padding:1px 5px;">${ep.method||'GET'}</span>
-          ${ep.name||ep.filename}
-        </div>`).join('')}`;
-      sidebarNav.appendChild(sd);
-      // body
-      const cd = document.createElement('div');
-      cd.className = 'cat-section'; cd.id = 'cat-'+cat;
-      cd.innerHTML = `
-        <div class="cat-heading">
-          <div class="cat-icon" style="color:${ci.color}"><i class="fa-solid ${ci.icon}"></i></div>
-          <span class="cat-name">${cat.charAt(0).toUpperCase()+cat.slice(1)}</span>
-          <span class="cat-count">${eps.length}</span>
-        </div>
-        ${eps.map((ep,i) => { _eps[gi+i]={...ep,cat}; return buildEpHtml({...ep,cat}, gi+i); }).join('')}`;
-      docsBody.appendChild(cd);
-      gi += eps.length;
-    }
-  } catch(e) {
-    document.getElementById('docs-body').innerHTML = `<div style="color:var(--red);font-family:'DM Mono',monospace;font-size:13px;padding:20px 0;">Gagal memuat: ${e.message}</div>`;
-  }
-}
+            await new Promise(r => setTimeout(r, 600));
 
-function scrollTo_(id, linkEl) {
-  const el = document.getElementById(id); if (!el) return;
-  el.scrollIntoView({behavior:'smooth',block:'start'});
-  if (!el.classList.contains('open')) el.classList.add('open');
-  document.querySelectorAll('.sidebar-ep-link').forEach(l => l.classList.remove('active'));
-  linkEl.classList.add('active');
-}
+            const ver = config.settings.apiVersion || '1.0.0';
+            terminalLog(`> arvi-api@${ver} dev`, 'system');
+            terminalLog(`> ts-node src/index.ts`, 'system');
+            await new Promise(r => setTimeout(r, 800));
+            terminalLog(``, 'system'); 
 
-function filterSidebar(q) {
-  document.querySelectorAll('.sidebar-ep-link').forEach(l => {
-    l.style.display = (!q || (l.dataset.search||'').toLowerCase().includes(q.toLowerCase())) ? 'flex' : 'none';
-  });
-}
+            terminalLog(`[INFO] Starting Server Instance...`, 'info');
+            await new Promise(r => setTimeout(r, 400));
+            terminalLog(`[INFO] Environment: Production`, 'info');
+            terminalLog(`[DB] Connected to MongoDB Atlas`, 'success');
+            await new Promise(r => setTimeout(r, 400));
 
-buildDocs();
-</script>
+            const allRoutes = [];
+            for (const cat in config.tags) {
+                config.tags[cat].forEach(r => allRoutes.push({cat, ...r}));
+            }
+
+            for(const route of allRoutes) {
+                const methodColor = route.method === 'GET' ? 'text-blue-400' : route.method === 'POST' ? 'text-green-400' : 'text-yellow-400';
+                terminalLog(`[+] <span class="${methodColor}">${route.method}</span> ${route.endpoint} <span class="text-gray-500">✓</span>`, 'info');
+                await new Promise(r => setTimeout(r, 20)); 
+            }
+            
+            await new Promise(r => setTimeout(r, 500));
+            terminalLog(``, 'system');
+            terminalLog(`[✓] Server running on https://arvi-rest-api.vercel.app`, 'success');
+            terminalLog(`[WATCH] Watching...`, 'warn');
+            
+            const container = document.getElementById('api-container');
+            if(container) {
+                container.classList.remove('opacity-0', 'translate-y-4');
+                container.classList.add('animate-fade-in-up');
+            }
+            document.getElementById('term-input-line').classList.remove('hidden');
+        }
+
+        function setUi(config) {
+            const s = config.settings;
+            if(document.getElementById('nav-title')) {
+                document.getElementById('nav-title').innerText = s.apiName || 'API';
+            }
+            if(document.getElementById('stat-visitors')) {
+                document.getElementById('stat-visitors').innerText = s.visitors || '1';
+                animateCounter('stat-visitors', 0, parseInt(s.visitors) || 1, 2000);
+            }
+            if (s.favicon) {
+                let link = document.querySelector("link[rel~='icon']") || document.createElement('link');
+                link.rel = 'icon'; link.href = s.favicon;
+                document.head.appendChild(link);
+            }
+        }
+
+        function animateCounter(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.innerText = value;
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function setSearch() {
+            const input = document.getElementById('search-input');
+            const noResults = document.getElementById('no-results');
+            if(!input) return;
+
+            input.addEventListener('input', (e) => {
+                const val = e.target.value.toLowerCase();
+                
+                if (val === '') {
+                    document.querySelectorAll('.api-section').forEach(section => {
+                        section.classList.remove('hidden'); 
+                        section.querySelector('.api-section-grid').classList.add('hidden'); 
+                        section.querySelector('.cat-arrow').classList.remove('rotate-180'); 
+                        section.querySelectorAll('.api-card-wrapper').forEach(c => c.classList.remove('hidden')); 
+                    });
+                    if(noResults) noResults.classList.add('hidden');
+                    return;
+                }
+
+                let anyVisible = false;
+                document.querySelectorAll('.api-section').forEach(section => {
+                    const grid = section.querySelector('.api-section-grid');
+                    const arrow = section.querySelector('.cat-arrow');
+                    
+                    let match = 0;
+                    section.querySelectorAll('.api-card-wrapper').forEach(card => {
+                        const txt = card.getAttribute('data-search').toLowerCase();
+                        if (txt.includes(val)) { 
+                            card.classList.remove('hidden');
+                            card.classList.add('animate-slide-in-right');
+                            setTimeout(() => card.classList.remove('animate-slide-in-right'), 500);
+                            match++; 
+                        } else { 
+                            card.classList.add('hidden'); 
+                        }
+                    });
+
+                    if (match > 0) {
+                        section.classList.remove('hidden');
+                        grid.classList.remove('hidden'); 
+                        grid.classList.add('animate-fade-in-up');
+                        arrow.classList.add('rotate-180');
+                        anyVisible = true;
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+
+                if(noResults) {
+                    noResults.classList.toggle('hidden', anyVisible);
+                    noResults.classList.toggle('flex', !anyVisible);
+                    if(!anyVisible) {
+                        noResults.classList.add('animate-fade-in-up');
+                    }
+                }
+            });
+        }
+
+        function loadEnd(tags) {
+            const container = document.getElementById('api-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            for (const [cat, routes] of Object.entries(tags)) {
+                const catId = `cat-${cat.replace(/\s+/g, '-')}`;
+                const section = document.createElement('div');
+                section.className = "api-section w-full animate-fade-in-up";
+                section.style.animationDelay = `${Object.keys(tags).indexOf(cat) * 0.1}s`;
+                
+                section.innerHTML = `
+                    <button id="btn-${catId}" onclick="toggleCategory('${catId}')" class="category-btn w-full flex items-center justify-between bg-white text-slate-700 p-4 rounded-xl shadow-sm border-2 border-fmn-blue hover:bg-slate-50 transition-all duration-300 group mb-3">
+                        <div class="relative z-10 flex items-center gap-4 w-full">
+                            <div class="w-10 h-10 bg-slate-100 text-fmn-blue rounded-lg flex items-center justify-center text-lg group-hover:bg-fmn-blue group-hover:text-white transition-colors border-2 border-fmn-purple">
+                                <i class="fa-solid fa-folder"></i>
+                            </div>
+                            <h2 class="text-lg font-bold tracking-wide text-fmn-dark flex-1 text-left">${cat}</h2>
+                            
+                            <div class="flex items-center gap-3">
+                                <span class="text-[10px] font-mono bg-fmn-dark text-white px-2 py-1 rounded-md font-bold">${routes.length} EPS</span>
+                                <i id="arrow-${catId}" class="cat-arrow fa-solid fa-chevron-down transition-transform duration-300 text-fmn-blue"></i>
+                            </div>
+                        </div>
+                    </button>
+                    <div id="grid-${catId}" class="api-section-grid grid grid-cols-1 gap-1 hidden mb-6 pl-2 w-full"></div>
+                `;
+                
+                const grid = section.querySelector('.api-section-grid');
+                
+                routes.forEach((route, idx) => {
+                    const id = `${cat}-${idx}`.replace(/\s+/g, '-');
+                    const methodColor = route.method === 'GET' ? 'bg-sky-500' : route.method === 'POST' ? 'bg-emerald-500' : 'bg-rose-500';
+                    
+                    let inputs = '';
+                    let copyUrl = route.endpoint;
+                    if (route.method === 'GET' && route.params && route.params.length > 0) {
+                        const paramsList = route.params.map(p => `${p.name}=`).join('&');
+                        copyUrl = `${route.endpoint}?${paramsList}`;
+                    }
+
+                    if (route.params?.length) {
+                        inputs = `<div class="bg-fmn-bg/50 p-4 border-y border-fmn-blue/20 grid gap-3 w-full animate-fade-in-up">` + 
+                        route.params.map(p => `
+                        <div class="min-w-0 transform transition-all duration-300 hover:scale-[1.02]">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-red-400">*</span>':''}</label>
+                            <input type="text" id="input-${id}-${p.name}" 
+                                placeholder="${p.description ? p.description : 'Value...'}" 
+                                class="w-full min-w-0 border border-slate-300 p-2 text-xs rounded-lg focus:border-fmn-blue focus:ring-1 focus:ring-fmn-blue focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon">
+                        </div>`).join('') + `</div>`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'api-card-wrapper w-full bg-white border border-slate-300 rounded-lg hover:border-fmn-blue transition-all duration-300 overflow-hidden shadow-sm hover:shadow-md';
+                    card.setAttribute('data-search', `${route.name} ${route.endpoint} ${cat}`);
+                    
+                    card.innerHTML = `
+                        <div class="p-2 cursor-pointer select-none hover:bg-slate-50 transition-colors" onclick="toggle('${id}')">
+                            <div class="flex justify-between items-center gap-3">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <span class="px-2.5 py-1 text-[10px] font-bold text-white ${methodColor} rounded-md font-mono tracking-wide w-14 text-center shadow-sm border border-black/10 shrink-0">${route.method}</span>
+                                    <div class="flex flex-col min-w-0">
+                                        <code class="font-bold text-xs sm:text-sm truncate font-mono text-slate-700 hover:text-fmn-dark transition-colors">${route.endpoint}</code>
+                                        <span class="text-[10px] text-slate-500 mt-0.5 font-bold truncate">${route.name}</span>
+                                    </div>
+                                </div>
+                                <i id="icon-${id}" class="fa-solid fa-plus text-[10px] text-slate-400 transition-transform duration-300 shrink-0"></i>
+                            </div>
+                        </div>
+                        
+                        <div id="body-${id}" class="hidden animate-slide-down w-full">
+                            ${inputs}
+                            <div class="p-4 flex gap-3 bg-white w-full items-center">
+                                
+                                <button id="btn-exec-${id}" onclick="testReq(this, '${route.endpoint}', '${route.method}', '${id}')" class="soft-btn variant-lavender flex-1 h-10 w-full">
+                                    <span class="soft-btn__wrapper">
+                                        <span class="soft-btn__content">
+                                            <span class="soft-btn__inner text-xs font-bold tracking-widest">
+                                                <i class="fa-solid fa-bolt"></i> EXECUTE
+                                            </span>
+                                        </span>
+                                    </span>
+                                </button>
+
+                                <button onclick="copy('${copyUrl}')" class="px-4 h-10 border border-slate-300 bg-white hover:bg-slate-50 text-slate-600 rounded-lg transition-all shadow-sm hover:shadow-neon transform hover:scale-110" title="Copy Full URL"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+
+                            <div id="res-area-${id}" class="response-area hidden mx-4 mb-4 rounded-lg overflow-hidden bg-[#1e1e1e] border border-slate-600 shadow-inner relative max-w-[calc(100%-2rem)]">
+                                <div class="bg-[#2d2d2d] px-3 py-2 flex items-center justify-between border-b border-gray-700">
+                                    <div class="flex gap-1.5">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div id="status-indicator-${id}" class="status-indicator status-waiting"></div>
+                                        <span id="status-${id}" class="text-[10px] font-mono font-bold text-slate-500">IDLE</span>
+                                        <span id="time-${id}" class="text-[10px] font-mono text-slate-500">0ms</span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                         <a id="dl-btn-${id}" class="hidden text-slate-500 hover:text-white cursor-pointer transform hover:scale-125 transition-transform"><i class="fa-solid fa-download text-[10px]"></i></a>
+                                         <button onclick="copyRes('${id}')" class="text-slate-500 hover:text-white transform hover:scale-125 transition-transform"><i class="fa-regular fa-clone text-[10px]"></i></button>
+                                         <button onclick="reset('${id}')" class="text-slate-500 hover:text-red-400 transform hover:scale-125 transition-transform"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                                    </div>
+                                </div>
+                                <div class="p-3 font-mono text-[11px] min-h-[100px] max-h-[400px] overflow-y-auto custom-scrollbar bg-[#1e1e1e] break-all whitespace-pre-wrap">
+                                    <div class="flex items-center gap-2 mb-2 text-slate-500 select-none border-b border-gray-800 pb-2 flex-wrap animate-slide-in-right">
+                                        <span class="text-green-500 font-bold">➜</span>
+                                        <span class="text-blue-400">~</span>
+                                        <span class="text-gray-400 break-all">curl -X ${route.method} ${route.endpoint}</span>
+                                    </div>
+                                    <div id="output-${id}" class="text-gray-300 break-all whitespace-pre-wrap leading-relaxed"></div>
+                                </div>
+                            </div>
+                        </div>`;
+                    grid.appendChild(card);
+                });
+                container.appendChild(section);
+            }
+            
+            initSoftButtons();
+        }
+
+        window.toggleCategory = (catId) => {
+            const grid = document.getElementById(`grid-${catId}`);
+            const arrow = document.getElementById(`arrow-${catId}`);
+            const btn = document.getElementById(`btn-${catId}`);
+            
+            if(btn) {
+                btn.classList.add('animating');
+                setTimeout(() => { btn.classList.remove('animating'); }, 500);
+            }
+
+            if(grid.classList.contains('hidden')) { 
+                grid.classList.remove('hidden'); 
+                grid.classList.add('animate-fade-in-up');
+                arrow.classList.add('rotate-180');
+            } else { 
+                grid.classList.add('hidden'); 
+                arrow.classList.remove('rotate-180');
+            }
+        };
+        
+        window.toggle = (id) => {
+            const b = document.getElementById(`body-${id}`);
+            const i = document.getElementById(`icon-${id}`);
+            if (b.classList.contains('hidden')) { 
+                b.classList.remove('hidden'); 
+                b.classList.add('animate-slide-down');
+                i.classList.remove('fa-plus');
+                i.classList.add('fa-minus', 'text-fmn-blue');
+                i.classList.add('rotate-180');
+            } else { 
+                b.classList.add('hidden'); 
+                i.classList.remove('fa-minus', 'text-fmn-blue', 'rotate-180');
+                i.classList.add('fa-plus');
+            }
+        };
+        
+        window.copy = (txt) => { 
+            navigator.clipboard.writeText(window.location.origin + txt); 
+            messeg("URL COPIED"); 
+        };
+        
+        window.copyRes = (id) => { 
+            const out = document.getElementById(`output-${id}`); 
+            if (out.innerText) { 
+                navigator.clipboard.writeText(out.innerText); 
+                messeg("RESPONSE COPIED"); 
+            }
+        };
+        
+        window.reset = (id) => { 
+            const resArea = document.getElementById(`res-area-${id}`);
+            resArea.classList.remove('show', 'success', 'error', 'showing');
+            resArea.classList.add('hidden');
+            document.getElementById(`output-${id}`).innerHTML = ''; 
+            const statusIndicator = document.getElementById(`status-indicator-${id}`);
+            statusIndicator.className = 'status-indicator status-waiting';
+        };
+
+        window.testReq = async (btn, url, method, id) => {
+            if (btn.disabled) return;
+            const out = document.getElementById(`output-${id}`);
+            const status = document.getElementById(`status-${id}`);
+            const time = document.getElementById(`time-${id}`);
+            const dlBtn = document.getElementById(`dl-btn-${id}`);
+            const resArea = document.getElementById(`res-area-${id}`);
+            const statusIndicator = document.getElementById(`status-indicator-${id}`);
+            
+            const btnInner = btn.querySelector('.soft-btn__inner');
+            const originalBtnText = btnInner.innerHTML;
+            btn.disabled = true; 
+            btnInner.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> PROCESSING';
+
+            resArea.classList.remove('hidden', 'success', 'error');
+            resArea.classList.add('show', 'showing');
+            statusIndicator.className = 'status-indicator status-waiting';
+            status.innerText = 'RUNNING...'; 
+            status.className = 'text-[10px] font-mono font-bold text-yellow-500';
+            out.innerHTML = '<span class="text-slate-500 italic">Establishing connection...</span>';
+            
+            const params = {};
+            document.querySelectorAll(`[id^="input-${id}-"]`).forEach(i => { 
+                if(i.value) {
+                    params[i.id.split(`input-${id}-`)[1]] = i.value;
+                    i.classList.add('border-green-400', 'bg-green-50');
+                    setTimeout(() => {
+                        i.classList.remove('border-green-400', 'bg-green-50');
+                    }, 1000);
+                }
+            });
+            
+            let fetchUrl = url + (method === 'GET' && Object.keys(params).length ? '?' + new URLSearchParams(params) : '');
+            let opts = { 
+                method, 
+                ...(method !== 'GET' ? { 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(params) 
+                } : {}) 
+            };
+            
+            terminalLog(`REQ: ${method} ${fetchUrl}`, 'warn');
+
+            let startTime = Date.now();
+            try {
+                const req = await fetch(fetchUrl, opts);
+                const duration = Date.now() - startTime;
+                
+                animateCounter(`time-${id}`, 0, duration, 500);
+                
+                if (req.ok) {
+                    statusIndicator.className = 'status-indicator status-success';
+                    status.innerText = `${req.status} ${req.statusText}`;
+                    status.className = 'text-[10px] font-mono font-bold text-green-500';
+                    resArea.classList.add('success');
+                } else {
+                    statusIndicator.className = 'status-indicator status-error';
+                    status.innerText = `${req.status} ${req.statusText}`;
+                    status.className = 'text-[10px] font-mono font-bold text-red-500';
+                    resArea.classList.add('error');
+                }
+
+                terminalLog(`RES: [${req.status}] ${fetchUrl}`, req.ok ? 'success' : 'error');
+
+                const type = req.headers.get('content-type');
+                if (type?.includes('json')) {
+                    const json = await req.json();
+                    out.innerHTML = syntaxHighlight(json);
+                    out.querySelectorAll('.json-key, .json-string, .json-number, .json-boolean, .json-null').forEach((el, idx) => {
+                        el.style.animationDelay = `${idx * 0.05}s`;
+                        el.classList.add('animate-slide-in-right');
+                    });
+                } else if (type?.startsWith('image')) {
+                    const blob = await req.blob();
+                    const urlObj = URL.createObjectURL(blob);
+                    dlBtn.href = urlObj; 
+                    dlBtn.download = `img-${Date.now()}.jpg`; 
+                    dlBtn.classList.remove('hidden');
+                    out.innerHTML = `<div class="flex justify-center p-2 animate-fade-in-up">
+                                        <img src="${urlObj}" class="max-w-full rounded border border-gray-700 max-h-[300px] transform transition-all duration-500 hover:scale-105">
+                                     </div>`;
+                } else {
+                    const text = await req.text();
+                    typewriterEffect(`output-${id}`, text, 10);
+                }
+            } catch (err) {
+                const duration = Date.now() - startTime;
+                time.innerText = `${duration}ms`;
+                statusIndicator.className = 'status-indicator status-error';
+                terminalLog(`ERR: ${err.message}`, 'error');
+                status.innerText = 'ERROR'; 
+                status.className = 'text-[10px] font-mono font-bold text-red-500';
+                resArea.classList.add('error');
+                out.innerHTML = `<span class="text-red-500">${err.message}</span>`;
+            } finally {
+                btn.disabled = false; 
+                btnInner.innerHTML = originalBtnText;
+            }
+        };
+
+        function typewriterEffect(elementId, text, speed = 20) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            let i = 0;
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, speed);
+                }
+            }
+            typeWriter();
+        }
+
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') json = JSON.stringify(json, undefined, 2);
+            return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) cls = 'json-key';
+                    else cls = 'json-string';
+                } else if (/true|false/.test(match)) cls = 'json-boolean';
+                else if (/null/.test(match)) cls = 'json-null';
+                return `<span class="${cls}">${match}</span>`;
+            });
+        }
+    </script>
 </body>
 </html>
