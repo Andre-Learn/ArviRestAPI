@@ -58,63 +58,50 @@ async function ytDownload(videoUrl: string) {
     audioFormats[0] ||
     null;
 
+  // 🔥 FETCH FINAL LINK VIDEO
+  let finalVideo = null;
+  let videoSize = null;
+
+  if (bestVideo?.mediaUrl) {
+    try {
+      const r: any = await axios.get(bestVideo.mediaUrl);
+      finalVideo = r.data?.fileUrl || bestVideo.mediaUrl;
+      videoSize = r.data?.fileSize || null;
+    } catch {
+      finalVideo = bestVideo.mediaUrl;
+    }
+  }
+
+  // 🔥 FETCH FINAL LINK AUDIO
+  let finalAudio = null;
+  let audioSize = null;
+
+  if (bestAudio?.mediaUrl) {
+    try {
+      const r: any = await axios.get(bestAudio.mediaUrl);
+      finalAudio = r.data?.fileUrl || bestAudio.mediaUrl;
+      audioSize = r.data?.fileSize || null;
+    } catch {
+      finalAudio = bestAudio.mediaUrl;
+    }
+  }
+
   return {
     code: 200,
     timestamp: Date.now(),
     data: {
-      id: api.id || null,
       title: api.title || null,
-      description: api.description || null,
       thumbnail: api.imagePreviewUrl || null,
-      preview_url: api.previewUrl || null,
-      permanent_link: api.permanentLink || null,
-      service: api.service || null,
-      author: {
-        name: api.userInfo?.name || null,
-        username: api.userInfo?.username || null,
-        user_id: api.userInfo?.userId || null,
-        avatar: api.userInfo?.userAvatar || null,
-        channel_url: api.userInfo?.internalUrl || null,
-        date_joined: api.userInfo?.dateJoined || null
+
+      video: {
+        url: finalVideo,
+        size: videoSize
       },
-      stats: {
-        media_count: api.mediaStats?.mediaCount || null,
-        followers: api.mediaStats?.followersCount || null,
-        views: api.mediaStats?.viewsCount || null
-      },
-      video_formats: videoFormats.map((v: any) => ({
-        url: v.mediaUrl || null,
-        quality: v.mediaQuality || null,
-        resolution: v.mediaRes || null,
-        duration: v.mediaDuration || null,
-        extension: v.mediaExtension || null,
-        file_size: v.mediaFileSize || null,
-        task: v.mediaTask || null
-      })),
-      audio_formats: audioFormats.map((a: any) => ({
-        url: a.mediaUrl || null,
-        quality: a.mediaQuality || null,
-        duration: a.mediaDuration || null,
-        extension: a.mediaExtension || null,
-        file_size: a.mediaFileSize || null,
-        task: a.mediaTask || null
-      })),
-      best_video: bestVideo
-        ? {
-            url: bestVideo.mediaUrl,
-            quality: bestVideo.mediaQuality,
-            resolution: bestVideo.mediaRes,
-            file_size: bestVideo.mediaFileSize
-          }
-        : null,
-      best_audio: bestAudio
-        ? {
-            url: bestAudio.mediaUrl,
-            quality: bestAudio.mediaQuality,
-            extension: bestAudio.mediaExtension,
-            file_size: bestAudio.mediaFileSize
-          }
-        : null
+
+      audio: {
+        url: finalAudio,
+        size: audioSize
+      }
     }
   };
 }
