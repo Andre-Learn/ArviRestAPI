@@ -1,24 +1,11 @@
 import axios from "axios";
 import { Request, Response } from "express";
 
-function extractVideoId(url: string) {
-  let videoId = "";
-  if (url.includes("youtu.be/")) {
-    videoId = url.split("youtu.be/")[1].split("?")[0];
-  } else if (url.includes("watch?v=")) {
-    videoId = url.split("watch?v=")[1].split("&")[0];
-  } else if (url.includes("/shorts/")) {
-    videoId = url.split("/shorts/")[1].split("?")[0];
-  }
-  return videoId;
-}
-
 async function ytDownload(videoUrl: string) {
   if (!videoUrl) throw Error("URL tidak boleh kosong");
 
   const headers = {
     "accept": "*/*",
-    "accept-language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     "origin": "https://app.ytdown.to",
     "referer": "https://app.ytdown.to/en27/",
@@ -38,81 +25,52 @@ async function ytDownload(videoUrl: string) {
   const data = res.data;
 
   if (!data.api || data.api.status !== "ok") {
-    throw Error("Gagal mengambil video YouTube");
+    throw Error("Gagal mengambil video");
   }
 
   const api = data.api;
   const mediaItems = api.mediaItems || [];
 
-  const videoFormats = mediaItems.filter((item: any) => item.type === "Video");
-  const audioFormats = mediaItems.filter((item: any) => item.type === "Audio");
+  const video = mediaItems.find((v: any) => v.type === "Video") || null;
+  const audio = mediaItems.find((a: any) => a.type === "Audio") || null;
 
-  const bestVideo =
-    videoFormats.find((v: any) => v.mediaQuality === "FHD") ||
-    videoFormats[0] ||
-    null;
-
-  const bestAudio =
-    audioFormats.find((a: any) => a.mediaExtension === "MP3") ||
-    audioFormats.find((a: any) => a.mediaQuality === "128K") ||
-    audioFormats[0] ||
-    null;
-
-  // 🔥 FETCH FINAL LINK VIDEO
   let finalVideo = null;
-  let videoSize = null;
+  let finalAudio = null;
 
-  if (bestVideo?.mediaUrl) {
+  // 🔥 resolve video
+  if (video?.mediaUrl) {
     try {
-      const r: any = await axios.get(bestVideo.mediaUrl);
-      finalVideo = r.data?.fileUrl || bestVideo.mediaUrl;
-      videoSize = r.data?.fileSize || null;
+      const r: any = await axios.get(video.mediaUrl);
+      finalVideo = r.data?.downloadUrl || r.data?.fileUrl || video.mediaUrl;
     } catch {
-      finalVideo = bestVideo.mediaUrl;
+      finalVideo = video.mediaUrl;
     }
   }
 
-  // 🔥 FETCH FINAL LINK AUDIO
-  let finalAudio = null;
-  let audioSize = null;
-
-  if (bestAudio?.mediaUrl) {
+  // 🔥 resolve audio
+  if (audio?.mediaUrl) {
     try {
-      const r: any = await axios.get(bestAudio.mediaUrl);
-      finalAudio = r.data?.fileUrl || bestAudio.mediaUrl;
-      audioSize = r.data?.fileSize || null;
+      const r: any = await axios.get(audio.mediaUrl);
+      finalAudio = r.data?.downloadUrl || r.data?.fileUrl || audio.mediaUrl;
     } catch {
-      finalAudio = bestAudio.mediaUrl;
+      finalAudio = audio.mediaUrl;
     }
   }
 
   return {
-    code: 200,
-    timestamp: Date.now(),
-    data: {
-      title: api.title || null,
-      thumbnail: api.imagePreviewUrl || null,
-
-      video: {
-        url: finalVideo,
-        size: videoSize
-      },
-
-      audio: {
-        url: finalAudio,
-        size: audioSize
-      }
-    }
+    title: api.title,
+    thumbnail: api.imagePreviewUrl,
+    video: finalVideo,
+    audio: finalAudio
   };
 }
 
-// 🔥 EXPORT HANDLER
 export default async function handler(req: Request, res: Response) {
   try {
     const url = req.query.url as string;
 
     if (!url) {
-      return res.json({
+      return res.status(400).json({
         status: false,
         message: "url required"
       });
@@ -120,13 +78,13 @@ export default async function handler(req: Request, res: Response) {
 
     const result = await ytDownload(url);
 
-    res.json({
+    return res.status(200).json({
       status: true,
       result
     });
 
   } catch (err: any) {
-    res.json({
+    return res.status(500).json({
       status: false,
       message: err.message
     });
