@@ -1733,6 +1733,19 @@
       ]
     },
     {
+  "name": "YouTube Downloader",
+  "endpoint": "/api/downloader/ytdown",
+  "filename": "ytdown",
+  "method": "GET",
+  "params": [
+    {
+      "name": "url",
+      "required": true,
+      "description": "Link YouTube"
+    }
+  ]
+},
+    {
       "name": "SnackVideo Downloader",
       "endpoint": "/api/downloader/snackvideodl",
       "filename": "snackvideodl",
