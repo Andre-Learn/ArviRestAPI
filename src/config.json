@@ -4103,8 +4103,7 @@
   "filename": "hdvid",
   "method": "GET",
   "params": [
-    { "name": "url", "required": true },
-    { "name": "format", "required": false }
+    { "name": "url", "required": true }
   ]
 }
 ]

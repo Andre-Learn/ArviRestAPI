@@ -6,26 +6,17 @@ class HDVideo {
     baseUrl = 'https://hdvideo.tr';
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0',
         'Accept': '*/*',
-        'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Accept-Encoding': 'gzip, deflate, br, zstd',
         'Origin': this.baseUrl,
-        'Referer': `${this.baseUrl}/`,
-        'Sec-Ch-Ua': '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': '"Linux"',
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-origin',
-        'Connection': 'keep-alive'
+        'Referer': `${this.baseUrl}/`
     };
 
     sleep(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async prepareDownload(url: string, formatType = 'mp3') {
+    async prepareDownload(url: string, formatType = 'mp4') {
         const formData = new FormData();
         formData.append('url', url);
         formData.append('format_type', formatType);
@@ -53,13 +44,8 @@ class HDVideo {
         for (let i = 0; i < maxAttempts; i++) {
             const result = await this.checkStatus(jobId);
             
-            if (result.status === 'completed') {
-                return result;
-            }
-            
-            if (result.status === 'failed' || result.status === 'error') {
-                return result;
-            }
+            if (result.status === 'completed') return result;
+            if (result.status === 'failed' || result.status === 'error') return result;
             
             await this.sleep(interval);
         }
@@ -67,36 +53,33 @@ class HDVideo {
         return { status: 'timeout', message: 'Download preparation timeout' };
     }
 
-    async downloadVideo(url: string, formatType = 'mp4') {
-        const prepareResult = await this.prepareDownload(url, formatType);
+    async downloadVideo(url: string) {
+        const prepareResult = await this.prepareDownload(url, "mp4");
         
         if (prepareResult.status !== 'started') {
             return {
                 success: false,
                 message: 'Failed to start download preparation',
-                prepareResult: prepareResult
+                prepareResult
             };
         }
         
         const jobId = prepareResult.job_id;
-        
         const finalResult = await this.waitForCompletion(jobId);
         
         return {
             success: finalResult.status === 'completed',
-            jobId: jobId,
-            url: url,
-            formatType: formatType,
+            jobId,
+            url,
             result: finalResult
         };
     }
 }
 
-// 🔥 EXPORT HANDLER (WAJIB)
+// 🔥 EXPRESS HANDLER
 export default async function handler(req: Request, res: Response) {
     try {
         const url = req.query.url as string;
-        const format = (req.query.format as string) || 'mp4';
 
         if (!url) {
             return res.status(400).json({
@@ -105,8 +88,8 @@ export default async function handler(req: Request, res: Response) {
             });
         }
 
-        const downloader = new HDVideo();
-        const result = await downloader.downloadVideo(url, format);
+        const api = new HDVideo();
+        const result = await api.downloadVideo(url);
 
         res.json({
             status: true,
