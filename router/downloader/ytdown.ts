@@ -1,6 +1,29 @@
 import axios from "axios";
 import { Request, Response } from "express";
 
+// 🔥 WAIT SAMPAI FILE READY
+async function resolveWorker(url: string, maxTry = 10) {
+  for (let i = 0; i < maxTry; i++) {
+    try {
+      const res = await axios.get(url);
+      const data = res.data;
+
+      const final =
+        data?.downloadUrl ||
+        data?.fileUrl ||
+        null;
+
+      if (final) return final;
+
+    } catch {}
+
+    await new Promise(r => setTimeout(r, 1500));
+  }
+
+  return null;
+}
+
+// 🔥 MAIN FUNCTION
 async function ytDownload(videoUrl: string) {
   if (!videoUrl) throw Error("URL tidak boleh kosong");
 
@@ -31,30 +54,28 @@ async function ytDownload(videoUrl: string) {
   const api = data.api;
   const mediaItems = api.mediaItems || [];
 
-  const video = mediaItems.find((v: any) => v.type === "Video") || null;
-  const audio = mediaItems.find((a: any) => a.type === "Audio") || null;
+  const video =
+    mediaItems.find((v: any) => v.type === "Video") || null;
+
+  const audio =
+    mediaItems.find((a: any) => a.type === "Audio") || null;
 
   let finalVideo = null;
   let finalAudio = null;
 
-  // 🔥 resolve video
+  // 🔥 PROSES VIDEO
   if (video?.mediaUrl) {
-    try {
-      const r: any = await axios.get(video.mediaUrl);
-      finalVideo = r.data?.downloadUrl || r.data?.fileUrl || video.mediaUrl;
-    } catch {
-      finalVideo = video.mediaUrl;
-    }
+    finalVideo = await resolveWorker(video.mediaUrl);
   }
 
-  // 🔥 resolve audio
+  // 🔥 PROSES AUDIO
   if (audio?.mediaUrl) {
-    try {
-      const r: any = await axios.get(audio.mediaUrl);
-      finalAudio = r.data?.downloadUrl || r.data?.fileUrl || audio.mediaUrl;
-    } catch {
-      finalAudio = audio.mediaUrl;
-    }
+    finalAudio = await resolveWorker(audio.mediaUrl);
+  }
+
+  // ❗ WAJIB: pastiin dua-duanya ready
+  if (!finalVideo || !finalAudio) {
+    throw new Error("File masih diproses, coba lagi");
   }
 
   return {
@@ -65,6 +86,7 @@ async function ytDownload(videoUrl: string) {
   };
 }
 
+// 🔥 EXPRESS HANDLER
 export default async function handler(req: Request, res: Response) {
   try {
     const url = req.query.url as string;

@@ -4095,6 +4095,18 @@
         "description": "ulzzanggirl endpoint",
         "params": []
       }
-    ]
+    ],
+    "tools": [
+{
+  "name": "HDVideo Downloader",
+  "endpoint": "/api/downloader/hdvid",
+  "filename": "hdvid",
+  "method": "GET",
+  "params": [
+    { "name": "url", "required": true },
+    { "name": "format", "required": false }
+  ]
+}
+]
   }
 }
