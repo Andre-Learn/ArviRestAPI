@@ -994,6 +994,13 @@
     ]
   },
   {
+  "name": "MyInstants Sounds",
+  "endpoint": "/api/fun/myinstants",
+  "filename": "myinstants",
+  "method": "GET",
+  "params": []
+},
+  {
     "name": "F-Droid Search",
     "endpoint": "/api/search/fdroid",
     "filename": "fdroid",
