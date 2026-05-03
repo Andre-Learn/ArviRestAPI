@@ -1791,7 +1791,20 @@
       "params": [
         { "name": "q", "required": true  }
         ]
-      }
+      },
+      {
+  "name": "Instagram Downloader",
+  "endpoint": "/api/downloader/igdl",
+  "filename": "igdl",
+  "method": "GET",
+  "params": [
+    {
+      "name": "url",
+      "required": true,
+      "description": "Link Instagram (reel/post)"
+    }
+  ]
+}
     ],                
     "maker": [
       {
@@ -4098,8 +4111,8 @@
     ],
     "tools": [
 {
-  "name": "HDVideo Downloader",
-  "endpoint": "/api/downloader/hdvid",
+  "name": "HD Video",
+  "endpoint": "/api/tools/hdvid",
   "filename": "hdvid",
   "method": "GET",
   "params": [
