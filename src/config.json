@@ -995,7 +995,7 @@
   },
   {
   "name": "MyInstants Sounds",
-  "endpoint": "/api/fun/myinstants",
+  "endpoint": "/api/search/myinstants",
   "filename": "myinstants",
   "method": "GET",
   "params": []
